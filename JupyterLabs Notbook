@@ -1,0 +1,99 @@
+import pandas as pd
+df = pd.read_csv('MEE 460 Water Tunnel Data.csv')
+df1 = pd.read_csv('MEE 460 Water Tunnel Data with Predictions.csv')
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+sns.scatterplot(x="AOA", y="CL Open", data=df)
+sns.scatterplot(x="AOA", y="CL Closed", data=df)
+df["diff"] = df["CL Open"]-df["CL Closed"]
+sns.scatterplot(x="AOA", y="diff", data=df)
+plt.title("Angle of Attack vs CL Open")
+plt.xlabel("Angle of Attack")
+plt.ylabel("CL Open")
+
+my_palette = {"CL Closed": "red"}
+sns.scatterplot(x="AOA", y="CL Closed",palette=my_palette, data=df)
+plt.title("Angle of Attack vs CL Closed")
+plt.xlabel("Angle of Attack")
+plt.ylabel("CL Closed")
+
+sns.scatterplot(x="tPA_closed", y="CL Open", data=df, )
+plt.title("Time vs CL Open")
+plt.xlabel("Time")
+plt.ylabel("CL Open")
+
+sns.scatterplot(x="tPA_closed", y="CL Closed", data=df, )
+plt.title("Time vs CL Closed")
+plt.xlabel("Time")
+plt.ylabel("CL Closed")
+
+sns.scatterplot(x="tPA_closed", y="AOA", data=df, )
+plt.title("Time vs AOA")
+plt.xlabel("Time")
+plt.ylabel("AOA")
+
+sns.scatterplot(x="CL Open", y="CL Closed", data=df, )
+plt.title("CL Closed vs CL Open")
+plt.xlabel("CL Open")
+plt.ylabel("CL Closed")
+
+
+import pandas as pd
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import KFold
+from sklearn.model_selection import *
+from sklearn.metrics import r2_score
+import numpy as np
+import matplotlib.pyplot as plt
+#data = pd.read_csv('MEE 460 Water Tunnel Data.csv')
+X = df[['CL Open']]
+y = df['AOA']
+r2_scores = []
+k = 10
+lr_model = LinearRegression()
+for i in range(k):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=True)
+    lr_model.fit(X_train, y_train)
+    #y_pred = lr_model.predict(X_test)
+    r2 = lr_model.score(X_test, y_test)
+    r2_scores.append(r2)
+sum(r2_scores)/k
+r2_scores
+rfinal = lr_model.fit(X, y)
+lr_model.score(X, y)
+lr_model.coef_
+lr_model.intercept_
+ypred = lr_model.predict(X)
+dp = pd.DataFrame(ypred)  # Create DataFrame
+dp.to_csv('output.csv', index=False)
+plt.plot(y,ypred, 'o',markersize=1, linewidth=0)
+
+X = df[['diff']]
+y = df['AOA']
+r2_scores = []
+k = 10
+lr_model = LinearRegression()
+for i in range(k):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=True)
+    lr_model.fit(X_train, y_train)
+    #y_pred = lr_model.predict(X_test)
+    r2 = lr_model.score(X_test, y_test)
+    r2_scores.append(r2)
+sum(r2_scores)/k
+r2_scores
+rfinal = lr_model.fit(X, y)
+lr_model.score(X, y)
+lr_model.coef_
+lr_model.intercept_
+ypred = lr_model.predict(X)
+ypred.shape
+dp = pd.DataFrame(ypred)  # Create DataFrame
+dp.to_csv('output.csv', index=False)
+plt.plot(y,ypred, 'o',markersize=1, linewidth=1)
+#lr_model.fit(y, ypred)
+#ypred2 = lr_model.predict(y)
+#plt.plot(y,ypred, 'o',markersize=1, linewidth=0)
+#plt.plot(y,ypred2, 'o',markersize=1, linewidth=0)
